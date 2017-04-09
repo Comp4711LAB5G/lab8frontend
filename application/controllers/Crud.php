@@ -1,16 +1,13 @@
 <?php
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-
 class Crud extends Application {
-
 	public function __construct()
 	{
 		parent::__construct();
 		$this->load->helper('formfields');
 		$this->error_messages = array();
 	}
-
 	public function index()
 	{
 		$userrole = $this->session->userdata('userrole');
@@ -21,18 +18,15 @@ class Crud extends Application {
 			$this->render();
 			return;
 		}
-
 		$this->data['pagebody'] = 'mtce';
 		$this->data['items'] = $this->menu->all();
 		$this->render();
 	}
-
 	function edit($id = null)
 	{
 		// try the session first
 		$key = $this->session->userdata('key');
 		$record = $this->session->userdata('record');
-
 		// if not there, get them from the database
 		if (empty($record))
 		{
@@ -41,7 +35,6 @@ class Crud extends Application {
 			$this->session->set_userdata('key', $id);
 			$this->session->set_userdata('record', $record);
 		}
-
 		$this->data['action'] = (empty($key)) ? 'Adding' : 'Editing';
 		
 		// build the form fields
@@ -50,31 +43,25 @@ class Crud extends Application {
 		$this->data['fdescription'] = makeTextArea('Description', 'description', $record->description);
 		$this->data['fprice'] = makeTextField('Price, each', 'price', $record->price);
 		$this->data['fpicture'] = makeTextField('Item image', 'picture', $record->picture);
-
 		$this->data['zsubmit'] = makeSubmitButton('Save', 'Submit changes');
-
 		$cats = $this->categories->all(); // get an array of category objects
 		foreach ($cats as $code => $category) // make it into an associative array
 			$codes[$category->id] = $category->name;
 		$this->data['fcategory'] = makeCombobox('Category', 'category', $record->category, $codes);
-
 		// show the editing form
 		$this->data['pagebody'] = "mtce-edit";
 		$this->show_any_errors();
 		$this->render();
 	}
-
 	function cancel()
 	{
 		$this->session->unset_userdata('key');
 		$this->session->unset_userdata('record');
 		$this->index();
 	}
-
 	function delete() {
 		$key = $this->session->userdata('key');
 		$record = $this->session->userdata('record');
-
 		// only delete if editing an existing record
 		if (! empty($record)) {
 			$this->menu->delete($key);
@@ -86,17 +73,14 @@ class Crud extends Application {
 	function add() {
 		$key = NULL;
 		$record = $this->menu->create();
-
 		$this->session->set_userdata('key', $key);
 		$this->session->set_userdata('record', $record);	
 		$this->edit();
 	}
-
 	function save() {
 		// try the session first
 		$key = $this->session->userdata('key');
 		$record = $this->session->userdata('record');
-
 		// if not there, nothing is in progress
 		if (empty($record)) {
 			$this->index();
@@ -151,7 +135,6 @@ class Crud extends Application {
 		// and redisplay the list
 		$this->index();	
 	}
-
 	// handle uploaded image, and use its name as the picture name
 	function replace_picture() {
 		$config = [
@@ -172,7 +155,6 @@ class Crud extends Application {
 		} else
 			return $this->upload->data('file_name');
 	}
-
 	function show_any_errors() {
 		$result = '';
 		if (empty($this->error_messages)) {
